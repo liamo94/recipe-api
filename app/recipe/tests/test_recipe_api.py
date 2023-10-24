@@ -1,4 +1,3 @@
-from decimal import Decimal
 from unittest import TestCase
 
 from django.urls import reverse
@@ -22,10 +21,7 @@ def create_recipe(**params):
     """Create and return a sample recipe"""
     defaults = {
         "title": "Sample recipe",
-        "time_minutes": 22,
-        "price": Decimal("5.25"),
         "description": "Sample recipe description",
-        "link": "http://example.com",
     }
     defaults.update(params)
 
@@ -66,8 +62,6 @@ class RecipeApiTests(TestCase):
         """Test creating a recipe"""
         payload = {
             "title": "sample recipe",
-            "time_minutes": 30,
-            "price": Decimal("5.99"),
         }
 
         res = self.client.post(RECIPES_URL, payload)
@@ -79,10 +73,9 @@ class RecipeApiTests(TestCase):
 
     def test_partial_update(self):
         """Test partial update of a recipe"""
-        original_link = "https://example.com/recipe.pdf"
+        original_description = "Some description"
         recipe = create_recipe(
-            title="Simple recipe title",
-            link=original_link,
+            title="Simple recipe title", description=original_description
         )
 
         payload = {"title": "New recipe title"}
@@ -92,21 +85,17 @@ class RecipeApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         recipe.refresh_from_db()
         self.assertEqual(recipe.title, payload["title"])
-        self.assertEqual(recipe.link, original_link)
+        self.assertEqual(recipe.description, original_description)
 
     def test_full_update(self):
         recipe = create_recipe(
             title="Simple recipe title",
-            link="https://example.com/recipe.pdf",
             description="Simple recipe description",
         )
 
         payload = {
             "title": "New recipe title",
-            "link": "https://example.com/new-recipe.pdf",
             "description": "New recipe description",
-            "time_minutes": 20,
-            "price": Decimal("2.50"),
         }
 
         url = detail_url(recipe.id)
