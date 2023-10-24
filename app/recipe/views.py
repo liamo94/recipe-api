@@ -2,8 +2,25 @@ from rest_framework import viewsets, mixins
 
 from core.models import Recipe, Ingredient
 from recipe import serializers
+from drf_spectacular.utils import (
+    extend_schema,
+    extend_schema_view,
+    OpenApiParameter,
+    OpenApiTypes,
+)
 
 
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "search",
+                OpenApiTypes.STR,
+                description="Fuzzy search of the recipe title",
+            ),
+        ]
+    )
+)
 class RecipeViewSet(viewsets.ModelViewSet):
     """Manage recipes in the database"""
 
@@ -11,8 +28,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.RecipeDetailSerializer
 
     def get_queryset(self):
-        """Retrieve recipes"""
-        return self.queryset.order_by("-id")
+        """Return objects for authenticated user"""
+        search = self.request.query_params.get("search")
+        queryset = self.queryset
+        if search:
+            queryset = queryset.filter(title__contains=search)
+
+        return queryset.order_by("-id").distinct()
 
     def get_serializer_class(self):
         """Return appropriate serializer class"""
