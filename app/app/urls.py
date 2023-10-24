@@ -30,5 +30,5 @@ urlpatterns = [
         name="api-docs",
     ),
     path("admin/", admin.site.urls),
-    path("/api/recipe/", include("recipe.urls")),
+    path("api/recipe/", include("recipe.urls")),
 ]
