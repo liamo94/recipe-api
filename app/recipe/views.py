@@ -43,11 +43,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         return self.serializer_class
 
-    # TODO: Do I need this?
-    def perform_create(self, serializer):
-        """Create a new recipe"""
-        serializer.save()
-
 
 class IngredientViewSet(
     mixins.DestroyModelMixin,
