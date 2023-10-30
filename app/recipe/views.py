@@ -1,6 +1,6 @@
 from rest_framework import viewsets, mixins
 
-from core.models import Recipe, Ingredient
+from core.models import Ingredient, Recipe
 from recipe import serializers
 from drf_spectacular.utils import (
     extend_schema,
@@ -24,17 +24,16 @@ from drf_spectacular.utils import (
 class RecipeViewSet(viewsets.ModelViewSet):
     """Manage recipes in the database"""
 
-    queryset = Recipe.objects.all()
     serializer_class = serializers.RecipeDetailSerializer
 
     def get_queryset(self):
         """Return objects for authenticated user"""
         search = self.request.query_params.get("search")
-        queryset = self.queryset
+        queryset = Recipe.objects.all()
         if search:
             queryset = queryset.filter(title__contains=search)
 
-        return queryset.order_by("-id").distinct()
+        return queryset.order_by("id").distinct()
 
     def get_serializer_class(self):
         """Return appropriate serializer class"""
@@ -52,9 +51,9 @@ class IngredientViewSet(
 ):
     """Manage ingredients in the database"""
 
-    queryset = Ingredient.objects.all()
     serializer_class = serializers.IngredientSerializer
 
     def get_queryset(self):
         """Retrieve ingredients"""
-        return self.queryset.order_by("-name").distinct()
+        queryset = Ingredient.objects.all()
+        return queryset.order_by("id").distinct()

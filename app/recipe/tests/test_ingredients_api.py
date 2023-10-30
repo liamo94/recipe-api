@@ -27,7 +27,7 @@ class IngredientsApiTests(TestCase):
 
         res = self.client.get(INGREDIENTS_URL)
 
-        ingredients = Ingredient.objects.all().order_by("-name")
+        ingredients = Ingredient.objects.all().order_by("name")
         serializer = IngredientSerializer(ingredients, many=True)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
